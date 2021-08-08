@@ -63,7 +63,7 @@ class UserTest < ActiveSupport::TestCase
   end
   
   test "password should be present (nonblank)" do
-    @user.password = @user.password_confirmation = " " *6
+    @user.password = @user.password_confirmation = " " * 6
     assert_not @user.valid?
   end
   
@@ -73,5 +73,13 @@ class UserTest < ActiveSupport::TestCase
   
   test "authenticated? should return false for a user with nil digest" do
     assert_not @user.authenticated?(:remember, '')
+  end
+  
+  test "associated microposts should be destroyed" do
+    @user.save
+    @user.microposts.create!(content: "Lorem ipsum")
+    assert_difference 'Micropost.count', -1 do
+      @user.destroy
+    end
   end
 end
